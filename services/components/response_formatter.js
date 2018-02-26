@@ -1,3 +1,5 @@
+const localCache = require('./local_cache').cache;
+
 exports.formatMessage = (response) => {
     console.log("Message to reformat :: ");
     console.log(JSON.stringify(response));
@@ -33,6 +35,12 @@ exports.formatMessage = (response) => {
         }
     }
 
-    formatResult.message = "Sorry, I couldn't understand you.";
+    var repeat_on_misunderstanding = localCache.getValue("misunderstanding_repeat");
+    if(!repeat_on_misunderstanding || repeat_on_misunderstanding <= 2) {
+        formatResult.tell = false;
+        repeat_on_misunderstanding += 1;
+        localCache.setValue("misunderstanding_repeat", repeat_on_misunderstanding);
+    }
+    formatResult.message = "Sorry, I couldn't understand you. Please try again later.";
     return formatResult;
 };

@@ -5,6 +5,7 @@ const localCache = require('./local_cache').cache;
 const uri = 'http://172.16.94.230:8000/panini/api/dst';
 
 exports.reset = () => {
+    localCache.setValue("misunderstanding_repeat", 0);
     var options = {
         uri: uri,
         method: 'POST',
