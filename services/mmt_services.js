@@ -1,15 +1,28 @@
 const ActionsSdkApp = require('actions-on-google').ActionsSdkApp;
 const messageHandler = require('./components/message_handler');
+const userHandler = require("./components/user_handler").userHandler;
+const stateHolder = require("./components/state_holder").stateHolder;
 
 'use strict';
 
 function responseHandler (app) {
-    // intent contains the name of the intent you defined in `initialTriggers`
     let intent = app.getIntent();
     switch (intent) {
         case app.StandardIntents.MAIN:
-            app.ask('Welcome to Make My Trip. How can I assist you !');
+            var promptSuffix = 'How can I assist you !';
+            var inputPrompt = 'Welcome to Make My Trip. ';
             messageHandler.reset();
+            var userId = app.getUser().userId;
+            console.log("User ID :: " + userId);
+            var userInfo = userHandler.getUserInfo(userId);
+            if (userInfo && (userInfo["verified"] && (userInfo["verified"] === true))) {
+                inputPrompt += promptSuffix;
+                stateHolder.setCurrentState(app.getConversationId(), "CONVERSATION_BEGAN");
+            } else {
+                inputPrompt += "Please tell your phone number for me to assist you better.";
+                stateHolder.setCurrentState(app.getConversationId(), "WAITING_FOR_PHONE");
+            }
+            app.ask(inputPrompt);
             break;
 
         case app.StandardIntents.TEXT: {
