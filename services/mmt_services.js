@@ -10,19 +10,21 @@ function responseHandler (app) {
     switch (intent) {
         case app.StandardIntents.MAIN:
             var promptSuffix = 'How can I assist you !';
-            var inputPrompt = 'Welcome to Make My Trip. ';
-            messageHandler.reset();
+            var inputPrompt = 'Welcome to Make My Trip. This is Maira, your Personal Assistant. ';
             var userId = app.getUser().userId;
             console.log("User ID :: " + userId);
-            var userInfo = userHandler.getUserInfo(userId);
-            if (userInfo && (userInfo["verified"] && (userInfo["verified"] === true))) {
-                inputPrompt += promptSuffix;
-                stateHolder.setCurrentState(app.getConversationId(), "CONVERSATION_BEGAN");
-            } else {
-                inputPrompt += "Please tell your phone number for me to assist you better.";
-                stateHolder.setCurrentState(app.getConversationId(), "WAITING_FOR_PHONE");
-            }
-            app.ask(inputPrompt);
+            userHandler.getUserInfo(userId, function (error, result) {
+                let userInfo = !error && result.value;
+
+                if (!error && userInfo && (userInfo["verified"] && (userInfo["verified"] === true))) {
+                    inputPrompt += promptSuffix;
+                    stateHolder.setCurrentState(app.getConversationId(), "CONVERSATION_BEGAN");
+                } else {
+                    inputPrompt += "Please tell your phone number for me to assist you better.";
+                    stateHolder.setCurrentState(app.getConversationId(), "WAITING_FOR_PHONE");
+                }
+                app.ask(inputPrompt);
+            });
             break;
 
         case app.StandardIntents.TEXT: {

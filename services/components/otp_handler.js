@@ -3,7 +3,8 @@ const request = require('request');
 class OtpHandler {
 
     generateOtp(phone, successCB, errorCB) {
-        var url = "http://172.16.47.73/mmt-extservices/service/v3/generateAndSendOtp?phonenumber=" + phone;
+        var url = "http://172.16.47.73" +
+            "/mmt-extservices/service/v3/generateAndSendOtp?phonenumber=" + phone;
         var options = {
             uri: url,
             method: 'GET',

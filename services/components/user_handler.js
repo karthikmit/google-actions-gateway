@@ -1,17 +1,35 @@
+const couchbase = require('couchbase');
+
 class UserHandler {
 
     constructor() {
-        this.userMap = {
+        const cluster = new couchbase.Cluster('couchbase://localhost/');
+        cluster.authenticate('Administrator', 'password');
+        this.bucket = cluster.openBucket('gag-user-profiles');
+        this.N1qlQuery = couchbase.N1qlQuery;
 
-        }
+        let couchbaseConnected = false;
+        this.bucket.on('error', function (err) {
+            couchbaseConnected = false;
+            console.log('CB CONNECTION ERROR:', err);
+        });
+
+        this.bucket.on('connect', function () {
+            couchbaseConnected = true;
+            console.log('connected to CouchBase');
+        });
+
+        this.bucket.manager().createPrimaryIndex(function(err) {
+            console.log("Primary index created :: " + !err ? " Success " : err);
+        });
     }
 
-    getUserInfo(userId) {
-        return this.userMap[userId];
+    getUserInfo(userId, cb) {
+        this.bucket.get('id:' + userId, cb);
     }
 
-    setUserInfo(userId, userInfo) {
-        this.userMap[userId] = userInfo;
+    setUserInfo(userId, userInfo, cb) {
+        this.bucket.upsert('id:' + userId, userInfo, {}, cb);
     }
 }
 
