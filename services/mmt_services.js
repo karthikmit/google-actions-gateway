@@ -10,7 +10,7 @@ function responseHandler (app) {
     switch (intent) {
         case app.StandardIntents.MAIN:
             var promptSuffix = 'How can I assist you !';
-            var inputPrompt = 'Welcome to Make My Trip. This is Maira, your Personal Assistant. ';
+            var inputPrompt = 'Welcome to Make My Trip. This is Myra. ';
             var userId = app.getUser().userId;
             console.log("User ID :: " + userId);
             userHandler.getUserInfo(userId, function (error, result) {

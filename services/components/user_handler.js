@@ -1,9 +1,10 @@
 const couchbase = require('couchbase');
+const constants = require('../../config');
 
 class UserHandler {
 
     constructor() {
-        const cluster = new couchbase.Cluster('couchbase://localhost/');
+        const cluster = new couchbase.Cluster('couchbase://' + constants.CB_SERVICE +  '/');
         cluster.authenticate('Administrator', 'password');
         this.bucket = cluster.openBucket('gag-user-profiles');
         this.N1qlQuery = couchbase.N1qlQuery;

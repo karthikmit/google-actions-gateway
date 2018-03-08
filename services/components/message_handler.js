@@ -5,7 +5,7 @@ const stateHolder = require("./state_holder").stateHolder;
 const otpHandler = require("./otp_handler").optHandler;
 const userHandler = require("./user_handler").userHandler;
 
-const uri = 'http://172.16.94.230:8000/panini/api/dst';
+const uri = 'http://10.106.105.18:8091/usermessagehandler/api/voice';
 
 /*exports.reset = () => {
     localCache.setValue("misunderstanding_repeat", 0);
@@ -48,10 +48,7 @@ exports.handleMessage = (app) => {
                 if(userInfo && userInfo["otp"] === question.trim()) {
                     app.ask("Thanks. Your number is verified. How may I assist you.");
                     userInfo["verified"] = true;
-                    userHandler.setUserInfo(app.getUser().userId, {
-                        "phone" : question,
-                        "verified" : true
-                    }, function () {
+                    userHandler.setUserInfo(app.getUser().userId, userInfo, function () {
 
                     });
                     stateHolder.setCurrentState(app.getConversationId(), "CONVERSATION_BEGAN");
@@ -87,6 +84,13 @@ exports.handleMessage = (app) => {
             return;
         }
 
+        console.log("Question asked :: " + question);
+        if(question.trim() === 'repeat') {
+            var message = localCache.getValue("last_message");
+            app.ask(message);
+            return;
+        }
+
         // Here User Info shouldn't be undefined / null.
         if(userInfo && (userInfo["verified"] === true)) {
             let phone = userInfo["phone"];
@@ -100,10 +104,8 @@ exports.handleMessage = (app) => {
                 uri: uri,
                 method: 'POST',
                 json: {
-                    "message": question,
-                    "channel": "GOOGLE_VOICE",
-                    "phone": phone,
-                    "conversation_id": app.getConversationId()
+                    "msg": question,
+                    "user": phone
                 }
             };
             console.log("Request Options :: ");
