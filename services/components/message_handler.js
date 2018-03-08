@@ -5,7 +5,7 @@ const stateHolder = require("./state_holder").stateHolder;
 const otpHandler = require("./otp_handler").optHandler;
 const userHandler = require("./user_handler").userHandler;
 
-const uri = 'http://10.106.105.18:8091/usermessagehandler/api/voice';
+const uri = 'http://172.16.94.232:8091/usermessagehandler/api/voice';
 
 /*exports.reset = () => {
     localCache.setValue("misunderstanding_repeat", 0);
